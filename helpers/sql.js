@@ -17,8 +17,8 @@ const { BadRequestError } = require("../expressError");
  *
  * Returns:
     {
-      setCols: "first_name=$1 age=$2 ..."
-      values: ['Aliya', 32, ...]
+      setCols: '"first_name"=$1, "last_name"=$2, ...'
+      values: ['Aliya', 'Smith', ...]
     }
  */
 
