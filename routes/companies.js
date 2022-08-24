@@ -52,7 +52,6 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
 
 router.get("/", async function (req, res, next) {
   const searchTerms = new Set(["nameLike", "minEmployees", "maxEmployees"]);
-
   if (req.query) {
     const searches = Object.keys(req.query);
     searches.forEach(s => {
