@@ -50,72 +50,71 @@ class Company {
   }
 
   /** Find all companies.
+   * Takes optional query terms: {nameLike, minEmployees, maxEmployees} and
+   * filters company database based on the search queries.
    *
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    * */
 
   static async findAll(search) {
-    let companiesRes;
 
-    if (Object.keys(search) !== 0) {
-      // try {
-      //   search.minEmployees = Number(search.minEmployees);
-      //   search.maxEmployees = Number(search.maxEmployees);
-      // } catch (err) {
-      //   throw new BadRequestError("Min/max employees search must be a number");
-      // }
-
-      if (search.minEmployees > search.maxEmployees) {
-        throw new BadRequestError(
-          "Minimum employees cannot exceed maximum employees"
-        );
+    if (search.minEmployees) {
+      if (!(+search.minEmployees)) {
+        throw new BadRequestError("Min employees search must be a number");
       }
-
-      let searchArray = [];
-      let searchParameters = "";
-
-      let index = 1;
-
-      for (let key in search) {
-        if (searchArray.length > 0) {
-          searchParameters += " AND "
-        }
-        if (key === "nameLike") {
-          searchParameters += `name ILIKE $${index}`;
-          searchArray.push(`%${search.nameLike}%`);
-        }
-        if (key === "minEmployees") {
-          searchParameters += `num_employees >= $${index}`;
-          searchArray.push(search.minEmployees);
-        }
-        if (key === "maxEmployees") {
-          searchParameters += `num_employees <= $${index}`;
-          searchArray.push(search.maxEmployees);
-        }
-        index++;
+    }
+    if (search.maxEmployees) {
+      if (!(+search.maxEmployees)) {
+        throw new BadRequestError("Max employees search must be a number");
       }
+    }
 
-      companiesRes = await db.query(
-        `SELECT handle,
+    if (+search.minEmployees > +search.maxEmployees) {
+      throw new BadRequestError(
+        "Minimum employees cannot exceed maximum employees"
+      );
+    }
+
+    const { searchParameters, searchArray } = Company.getSearchQuery(search);
+
+    const companiesRes = await db.query(
+      `SELECT handle,
                   name,
                   description,
                   num_employees AS "numEmployees",
                   logo_url AS "logoUrl"
              FROM companies
-             WHERE ${searchParameters}
+             ${searchParameters}
              ORDER BY name`, searchArray);
 
-    } else {
-      companiesRes = await db.query(
-        `SELECT handle,
-                name,
-                description,
-                num_employees AS "numEmployees",
-                logo_url AS "logoUrl"
-           FROM companies
-           ORDER BY name`);
-    }
     return companiesRes.rows;
+  }
+
+  static getSearchQuery(search) {
+    let searchArray = [];
+    let searchParameters = "";
+
+    for (let key in search) {
+      if (searchArray.length === 0) {
+        searchParameters += "WHERE ";
+      } else {
+        searchParameters += " AND ";
+      }
+      if (key === "nameLike") {
+        searchArray.push(`%${search.nameLike}%`);
+        searchParameters += `name ILIKE $${searchArray.length}`;
+      }
+      if (key === "minEmployees") {
+        searchArray.push(search.minEmployees);
+        searchParameters += `num_employees >= $${searchArray.length}`;
+      }
+      if (key === "maxEmployees") {
+        searchArray.push(search.maxEmployees);
+        searchParameters += `num_employees <= $${searchArray.length}`;
+      }
+    }
+
+    return { searchParameters, searchArray };
   }
 
   /** Given a company handle, return data about company.

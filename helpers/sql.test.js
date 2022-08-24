@@ -27,13 +27,12 @@ describe("sql for partial update", function () {
 
   test("doesn't work: invalid input", function () {
     const dataToUpdate = {};
-    let results;
 
     try {
-      results = sqlForPartialUpdate(dataToUpdate, jsToSql);
+      let results = sqlForPartialUpdate(dataToUpdate, jsToSql);
     } catch (err) {
       expect(err instanceof BadRequestError).toBeTruthy();
     }
-
   });
+  
 });

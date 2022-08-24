@@ -51,17 +51,21 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
  */
 
 router.get("/", async function (req, res, next) {
+  const search = req.query;
+  // try json schema for validation
   const searchTerms = new Set(["nameLike", "minEmployees", "maxEmployees"]);
-  if (req.query) {
-    const searches = Object.keys(req.query);
-    searches.forEach(s => {
+
+  // validates search terms of query filters
+  if (Object.keys(search).length) {
+    const searchKeys = Object.keys(search);
+    searchKeys.forEach(s => {
       if (!searchTerms.has(s)) {
         throw new BadRequestError("invalid search terms");
       };
     })
   }
 
-  const companies = await Company.findAll(req.query);
+  const companies = await Company.findAll(search);
 
   return res.json({ companies });
 });
