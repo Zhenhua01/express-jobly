@@ -15,6 +15,7 @@ beforeEach(commonBeforeEach);
 afterEach(commonAfterEach);
 afterAll(commonAfterAll);
 
+let jobIds = require("./_testCommon");
 
 /************************************** create */
 
