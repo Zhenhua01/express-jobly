@@ -108,7 +108,7 @@ describe("ensureAdmin", function () {
     }
   });
 
-  test("unauth if not an admin", function () {
+  test("unauth if log in but not an admin", function () {
     expect.assertions(1);
     const req = {};
     const res = { locals: { user: { username: "test", isAdmin: false } } };
@@ -146,10 +146,10 @@ describe("ensureUserOrAdmin", function () {
     ensureUserOrAdmin(req, res, next);
   });
 
-  test("unauth if not an admin or user", function () {
+  test("unauth if no login", function () {
     expect.assertions(1);
     const req = { params: { username: "test" } };
-    const res = { locals: { user: { username: "notusername", isAdmin: false } } };
+    const res = { locals: {} };
     const next = function (err) {
       expect(err).toBeFalsy();
     };
@@ -161,10 +161,10 @@ describe("ensureUserOrAdmin", function () {
     }
   });
 
-  test("unauth if no login", function () {
+  test("unauth if not an admin and not the user of username", function () {
     expect.assertions(1);
     const req = { params: { username: "test" } };
-    const res = { locals: {} };
+    const res = { locals: { user: { username: "notusername", isAdmin: false } } };
     const next = function (err) {
       expect(err).toBeFalsy();
     };

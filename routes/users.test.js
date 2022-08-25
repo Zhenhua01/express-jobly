@@ -48,22 +48,6 @@ describe("POST /users", function () {
     });
   });
 
-  test("unauthorized if user is not Admin", async function () {
-    const resp = await request(app)
-        .post("/users")
-        .send({
-          username: "u-new",
-          firstName: "First-new",
-          lastName: "Last-newL",
-          password: "password-new",
-          email: "new@email.com",
-          isAdmin: false,
-        })
-        .set("authorization", `Bearer ${u1Token}`);
-    expect(resp.statusCode).toEqual(401);
-    expect(resp.body.error.message).toEqual("Unauthorized")
-  });
-
   test("works for Admins: create admin", async function () {
     const resp = await request(app)
         .post("/users")
@@ -86,6 +70,22 @@ describe("POST /users", function () {
         isAdmin: true,
       }, token: expect.any(String),
     });
+  });
+
+  test("unauthorized if user is not Admin", async function () {
+    const resp = await request(app)
+        .post("/users")
+        .send({
+          username: "u-new",
+          firstName: "First-new",
+          lastName: "Last-newL",
+          password: "password-new",
+          email: "new@email.com",
+          isAdmin: false,
+        })
+        .set("authorization", `Bearer ${u1Token}`);
+    expect(resp.statusCode).toEqual(401);
+    expect(resp.body.error.message).toEqual("Unauthorized")
   });
 
   test("unauth for anon", async function () {
@@ -162,7 +162,7 @@ describe("GET /users", function () {
     });
   });
 
-  test("unauthorized for non-Admin", async function () {
+  test("unauthorized for non-Admins", async function () {
     const resp = await request(app)
         .get("/users")
         .set("authorization", `Bearer ${u1Token}`);
@@ -191,7 +191,7 @@ describe("GET /users", function () {
 /************************************** GET /users/:username */
 
 describe("GET /users/:username", function () {
-  test("works for Admin", async function () {
+  test("works for Admins", async function () {
     const resp = await request(app)
         .get(`/users/u3`)
         .set("authorization", `Bearer ${u1TokenAdmin}`);
@@ -264,7 +264,7 @@ describe("PATCH /users/:username", () => {
     });
   });
 
-  test("works for Admin, not user", async function () {
+  test("works for Admin and not user of username", async function () {
     const resp = await request(app)
         .patch(`/users/u2`)
         .send({
@@ -322,7 +322,7 @@ describe("PATCH /users/:username", () => {
     expect(resp.statusCode).toEqual(400);
   });
 
-  test("works: set new password", async function () {
+  test("works: set new password for user of username, non-Admin", async function () {
     const resp = await request(app)
         .patch(`/users/u1`)
         .send({
@@ -342,7 +342,7 @@ describe("PATCH /users/:username", () => {
     expect(isSuccessful).toBeTruthy();
   });
 
-  test("works: set new password", async function () {
+  test("works: set new password for Admin", async function () {
     const resp = await request(app)
         .patch(`/users/u2`)
         .send({
@@ -366,14 +366,14 @@ describe("PATCH /users/:username", () => {
 /************************************** DELETE /users/:username */
 
 describe("DELETE /users/:username", function () {
-  test("works for user of username", async function () {
+  test("works for user of username, non-Admin", async function () {
     const resp = await request(app)
         .delete(`/users/u1`)
         .set("authorization", `Bearer ${u1Token}`);
     expect(resp.body).toEqual({ deleted: "u1" });
   });
 
-  test("works for Admin", async function () {
+  test("works for Admin and not user of username", async function () {
     const resp = await request(app)
         .delete(`/users/u2`)
         .set("authorization", `Bearer ${u1TokenAdmin}`);

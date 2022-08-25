@@ -89,6 +89,7 @@ class Company {
 
     return companiesRes.rows;
   }
+  
 // doesn't have unit test yet
 
 /** Given a search object data from req.query, returns 'searchParameters' and

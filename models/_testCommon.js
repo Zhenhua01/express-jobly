@@ -16,18 +16,31 @@ async function commonBeforeAll() {
            ('c3', 'C3', 3, 'Desc3', 'http://c3.img')`);
 
   await db.query(`
-        INSERT INTO users(username,
-                          password,
-                          first_name,
-                          last_name,
-                          email)
-        VALUES ('u1', $1, 'U1F', 'U1L', 'u1@email.com'),
-               ('u2', $2, 'U2F', 'U2L', 'u2@email.com')
-        RETURNING username`,
-      [
-        await bcrypt.hash("password1", BCRYPT_WORK_FACTOR),
-        await bcrypt.hash("password2", BCRYPT_WORK_FACTOR),
-      ]);
+    INSERT INTO users(username,
+                      password,
+                      first_name,
+                      last_name,
+                      email)
+    VALUES ('u1', $1, 'U1F', 'U1L', 'u1@email.com'),
+            ('u2', $2, 'U2F', 'U2L', 'u2@email.com')
+    RETURNING username`,
+    [
+      await bcrypt.hash("password1", BCRYPT_WORK_FACTOR),
+      await bcrypt.hash("password2", BCRYPT_WORK_FACTOR),
+    ]);
+
+  const results = await db.query(`
+    INSERT INTO jobs(title, salary, equity, company_handle)
+    VALUES ('j1', '1000000', 0.010, 'c1'),
+            ('j2', '1100000', 0.005, 'c2'),
+            ('j3', '1200000', 0, 'c3')
+            RETURNING id`);
+
+  // return {
+  //   j1Id: results.rows[0].id,
+  //   j2Id: results.rows[1].id,
+  //   j3Id: results.rows[2].id
+  // }
 }
 
 async function commonBeforeEach() {

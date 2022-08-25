@@ -42,35 +42,32 @@ function ensureLoggedIn(req, res, next) {
   }
 }
 
-/** Middleware to use when they must be an admin.
+// note: authorize specifically or deny broadly for security
+
+/** Middleware to test if user is an admin.
  *
  * If not, raises Unauthorized.
  */
 
 function ensureAdmin(req, res, next) {
   const user = res.locals.user;
-  if (!user || !user.isAdmin) {
+  if (!user || user.isAdmin !== true) {
     throw new UnauthorizedError();
   }
   return next();
 }
 
-// function ensureAdmin(req, res, next) {
-//   const user = res.locals.user;
-//   const username = req.params.username;
-//   if (user.isAdmin || user.username === username) {
-//     return next();
-//   }
-
-//   throw new UnauthorizedError();
-// }
+/** Middleware to test if user is an admin or if the username belongs to user.
+ *
+ * If not, raises Unauthorized.
+ */
 
 function ensureUserOrAdmin(req, res, next) {
   const user = res.locals.user;
   const username = req.params.username;
   if (!user) throw new UnauthorizedError();
 
-  if (user.isAdmin || user.username === username) {
+  if (user.isAdmin === true || user.username === username) {
     return next();
   }
 
