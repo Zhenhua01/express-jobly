@@ -145,29 +145,6 @@ describe("findAll", function () {
     }
   });
 
-  test("does not work: where minEmployees is not a number", async function () {
-    try {
-      let companies = await Company.findAll({
-        minEmployees: 'hello'
-      });
-    } catch (err) {
-      expect(err instanceof BadRequestError).toBeTruthy();
-      expect(err.message).toEqual("Min employees search must be a number");
-    }
-  });
-
-  test("does not work: where maxEmployees is not a number", async function () {
-    try {
-      let companies = await Company.findAll({
-        minEmployees: '3',
-        maxEmployees: 'hello'
-      });
-    } catch (err) {
-      expect(err instanceof BadRequestError).toBeTruthy();
-      expect(err.message).toEqual("Max employees search must be a number");
-    }
-  });
-
 });
 
 /************************************** get */

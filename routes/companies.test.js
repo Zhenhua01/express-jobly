@@ -119,9 +119,9 @@ describe("GET /companies", function () {
     const resp = await request(app)
     .get("/companies")
     .query({
-      nameLike: 'c',
-      minEmployees: '2',
-      maxEmployees: '3'
+      nameLike: "c",
+      minEmployees: "2",
+      maxEmployees: "3"
     });
 
     expect(resp.body).toEqual({
@@ -151,9 +151,19 @@ describe("GET /companies", function () {
     .query({ name: 'c' });
 
     expect(resp.statusCode).toEqual(400);
-    expect(resp.body.error.message).toEqual("invalid search terms");
+    expect(resp.body.error.message).toEqual(
+      ["instance is not allowed to have the additional property \"name\""]);
   });
 
+  test("not ok if minEmployee not an integer", async function () {
+    const resp = await request(app)
+    .get("/companies")
+    .query({ minEmployees: 'c' });
+
+    expect(resp.statusCode).toEqual(400);
+    expect(resp.body.error.message).toEqual(
+      ["instance.minEmployees is not of a type(s) integer"]);
+  });
 
   test("fails: test next() handler", async function () {
     // there's no normal failure event which will cause this route to fail ---

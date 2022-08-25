@@ -11,6 +11,7 @@ const Company = require("../models/company");
 
 const companyNewSchema = require("../schemas/companyNew.json");
 const companyUpdateSchema = require("../schemas/companyUpdate.json");
+const companySearch = require("../schemas/companySearch.json");
 
 const router = new express.Router();
 
@@ -52,18 +53,33 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
 
 router.get("/", async function (req, res, next) {
   const search = req.query;
-  // try json schema for validation
-  const searchTerms = new Set(["nameLike", "minEmployees", "maxEmployees"]);
+
+  //update query string for min/max employees to integer
+  if (search.minEmployees) search.minEmployees = +search.minEmployees;
+  if (search.maxEmployees) search.maxEmployees = +search.maxEmployees;
 
   // validates search terms of query filters
-  if (Object.keys(search).length) {
-    const searchKeys = Object.keys(search);
-    searchKeys.forEach(s => {
-      if (!searchTerms.has(s)) {
-        throw new BadRequestError("invalid search terms");
-      };
-    })
+  const validator = jsonschema.validate(
+    search,
+    companySearch,
+    { required: true }
+  );
+
+  if (!validator.valid) {
+    const errs = validator.errors.map(e => e.stack);
+    throw new BadRequestError(errs);
   }
+
+  // const searchTerms = new Set(["nameLike", "minEmployees", "maxEmployees"]);
+
+  // if (Object.keys(search).length) {
+  //   const searchKeys = Object.keys(search);
+  //   searchKeys.forEach(s => {
+  //     if (!searchTerms.has(s)) {
+  //       throw new BadRequestError("invalid search terms");
+  //     };
+  //   })
+  // }
 
   const companies = await Company.findAll(search);
 

@@ -58,18 +58,18 @@ class Company {
 
   static async findAll(search) {
 
-    if (search.minEmployees) {
-      if (!(+search.minEmployees)) {
-        throw new BadRequestError("Min employees search must be a number");
-      }
-    }
-    if (search.maxEmployees) {
-      if (!(+search.maxEmployees)) {
-        throw new BadRequestError("Max employees search must be a number");
-      }
-    }
+    // if (search.minEmployees) {
+    //   if (!(search.minEmployees)) {
+    //     throw new BadRequestError("Min employees search must be a number");
+    //   }
+    // }
+    // if (search.maxEmployees) {
+    //   if (!(search.maxEmployees)) {
+    //     throw new BadRequestError("Max employees search must be a number");
+    //   }
+    // }
 
-    if (+search.minEmployees > +search.maxEmployees) {
+    if (search.minEmployees > search.maxEmployees) {
       throw new BadRequestError(
         "Minimum employees cannot exceed maximum employees"
       );
@@ -89,7 +89,7 @@ class Company {
 
     return companiesRes.rows;
   }
-
+// doesn't have unit test yet
   static getSearchQuery(search) {
     let searchArray = [];
     let searchParameters = "";
