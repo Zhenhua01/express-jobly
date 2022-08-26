@@ -6,7 +6,7 @@ const { BadRequestError } = require("../expressError");
  * is a query string of columns to update for SQL and 'values' is an array
  * of values to be updated for each corresponding column
  *
- * 'dataToUpdate' can include:
+ * 'dataToUpdate' use example:
  * { firstName, lastName, password, email, isAdmin }
  *
  * 'jsToSql' converts JS data keys to SQL column keys:

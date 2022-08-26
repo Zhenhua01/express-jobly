@@ -89,16 +89,21 @@ class Company {
 
     return companiesRes.rows;
   }
-  
+
 // doesn't have unit test yet
 
 /** Given a search object data from req.query, returns 'searchParameters' and
  * 'searchArray' as an object for database query, where:
+ *
  * searchParameters is a string for the 'WHERE' clause of the database query,
- * and searchArray is an array of search values. Returns an empty string and
- * empty array if the search object is empty.
+ * and searchArray is an array of search values.
+ *
+ *  * search object data can include:
+ * { nameLike, minEmployees, maxEmployees }
  *
  * Returns: { searchParameters, searchArray } = { "WHERE ...", [values ...] }
+ *
+ * Returns an empty string and empty array if the search object is empty.
  */
 
   static getSearchQuery(search) {
