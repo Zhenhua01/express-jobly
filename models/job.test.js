@@ -21,7 +21,7 @@ describe("create", function () {
   const newJob = {
     title: "newJob",
     salary: 99000,
-    equity: 0,
+    equity: '0.010',
     companyHandle: "c3",
   };
 
@@ -31,7 +31,7 @@ describe("create", function () {
       id: expect.any(Number),
       title: "newJob",
       salary: 99000,
-      equity: "0",
+      equity: "0.010",
       companyHandle: "c3",
     });
 
@@ -44,7 +44,7 @@ describe("create", function () {
         id: expect.any(Number),
         title: "newJob",
         salary: 99000,
-        equity: "0",
+        equity: "0.010",
         company_handle: "c3",
       },
     ]);

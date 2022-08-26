@@ -7,6 +7,8 @@ let jobIds = [];
 
 async function commonBeforeAll() {
   // noinspection SqlWithoutWhere
+  await db.query("DELETE FROM jobs");
+  // noinspection SqlWithoutWhere
   await db.query("DELETE FROM companies");
   // noinspection SqlWithoutWhere
   await db.query("DELETE FROM users");
@@ -33,16 +35,12 @@ async function commonBeforeAll() {
 
   const results = await db.query(`
     INSERT INTO jobs(title, salary, equity, company_handle)
-    VALUES ('j1', '1000000', 0.010, 'c1'),
-            ('j2', '1100000', 0.005, 'c2'),
-            ('j3', '1200000', 0, 'c3')
+    VALUES ('j1', 1000000, 0.010, 'c1'),
+            ('j2', 1100000, 0.005, 'c2'),
+            ('j3', 1200000, 0, 'c3')
             RETURNING id`);
 
   jobIds.push(results.rows[0].id, results.rows[1].id, results.rows[2].id);
-
-  // jobIds['j1id'] = results.rows[0].id;
-  // jobIds['j2id'] = results.rows[1].id;
-  // jobIds['j3id'] = results.rows[2].id;
 }
 
 async function commonBeforeEach() {
