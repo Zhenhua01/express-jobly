@@ -5,7 +5,8 @@
     "properties": {
       "title": {
         "type": "string",
-        "minLength": 1
+        "minLength": 1,
+        "maxLength": 50
       },
       "salary": {
         "type": "integer",
@@ -16,7 +17,8 @@
       },
       "companyHandle": {
         "type": "string",
-        "minLength": 1
+        "minLength": 1,
+        "maxLength": 30
       }
     },
     "additionalProperties": false,

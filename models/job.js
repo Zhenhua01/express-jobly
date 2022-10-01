@@ -12,20 +12,19 @@ class Job {
   * data should be { title, salary, equity, companyHandle }
   *
   * Returns { id, title, salary, equity, companyHandle }
-  *
   * */
 
   static async create({ title, salary, equity, companyHandle }) {
 
     const result = await db.query(
       `INSERT INTO jobs(
-            title,
-            salary,
-            equity,
-            company_handle)
-            VALUES
-              ($1, $2, $3, $4)
-            RETURNING id, title, salary, equity, company_handle AS "companyHandle"`,
+              title,
+              salary,
+              equity,
+              company_handle)
+              VALUES
+                ($1, $2, $3, $4)
+              RETURNING id, title, salary, equity, company_handle AS "companyHandle"`,
       [
         title,
         salary,
@@ -102,7 +101,8 @@ class Job {
 
   /** Given a job id, return data about job.
    *
-   * Returns { id, title, salary, equity, companyHandle  }
+   * Returns { id, title, salary, equity, companyHandle, company }
+   *    where company: { handle, name, description, numEmployees, logoUrl }
    *
    * Throws NotFoundError if not found.
    **/
@@ -110,13 +110,25 @@ class Job {
   static async get(id) {
     const jobRes = await db.query(
       `SELECT id, title, salary, equity, company_handle AS "companyHandle"
-           FROM jobs
-           WHERE id = $1`,
-      [id]);
+          FROM jobs
+          WHERE id = $1`,
+        [id]);
 
     const job = jobRes.rows[0];
 
     if (!job) throw new NotFoundError(`No job: ${id}`);
+
+    const companiesRes = await db.query(
+      `SELECT handle,
+              name,
+              description,
+              num_employees AS "numEmployees",
+              logo_url AS "logoUrl"
+           FROM companies
+           WHERE handle = $1`,
+        [job.companyHandle]);
+
+    job.company = companiesRes.rows[0];
 
     return job;
   }

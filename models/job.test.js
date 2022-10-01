@@ -113,7 +113,7 @@ describe("findAll", function () {
 
   test("works: filter minSalary", async function () {
     const { jobIds } = require("./_testCommon");
-    let jobs = await Job.findAll({ minSalary: 1100000});
+    let jobs = await Job.findAll({ minSalary: 1100000 });
     expect(jobs).toEqual([
       {
         id: jobIds[1],
@@ -184,10 +184,10 @@ describe("findAll", function () {
   test("works: filter title, minSalary, hasEquity=true", async function () {
     const { jobIds } = require("./_testCommon");
     let jobs = await Job.findAll({
-                                  title: "J",
-                                  minSalary: 1100000,
-                                  hasEquity: true
-                                });
+      title: "J",
+      minSalary: 1100000,
+      hasEquity: true
+    });
     expect(jobs).toEqual([
       {
         id: jobIds[1],
@@ -202,26 +202,26 @@ describe("findAll", function () {
   test("works: filter params in different order", async function () {
     const { jobIds } = require("./_testCommon");
     let jobs = await Job.findAll({
-                                  title: "J",
-                                  hasEquity: false,
-                                  minSalary: 1100000,
+      title: "J",
+      hasEquity: false,
+      minSalary: 1100000,
 
-                                });
-      expect(jobs).toEqual([
-        {
-          id: jobIds[1],
-          title: "j2",
-          salary: 1100000,
-          equity: "0.005",
-          companyHandle: "c2",
-        },
-        {
-          id: jobIds[2],
-          title: "j3",
-          salary: 1200000,
-          equity: "0",
-          companyHandle: "c3",
-        }
+    });
+    expect(jobs).toEqual([
+      {
+        id: jobIds[1],
+        title: "j2",
+        salary: 1100000,
+        equity: "0.005",
+        companyHandle: "c2",
+      },
+      {
+        id: jobIds[2],
+        title: "j3",
+        salary: 1200000,
+        equity: "0",
+        companyHandle: "c3",
+      }
     ]);
   });
 
@@ -240,6 +240,13 @@ describe("get", function () {
       salary: 1000000,
       equity: "0.010",
       companyHandle: "c1",
+      company: {
+        "description": "Desc1",
+        "handle": "c1",
+        "logoUrl": "http://c1.img",
+        "name": "C1",
+        "numEmployees": 1,
+      }
     });
   });
 

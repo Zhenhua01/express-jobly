@@ -109,8 +109,8 @@ describe("GET /companies", function () {
 
   test("ok for search name", async function () {
     const resp = await request(app)
-    .get("/companies")
-    .query({nameLike: 'c1'});
+      .get("/companies")
+      .query({ nameLike: 'c1' });
 
     expect(resp.body).toEqual({
       companies:
@@ -128,12 +128,12 @@ describe("GET /companies", function () {
 
   test("ok for filter name, minEmployees, maxEmployees", async function () {
     const resp = await request(app)
-    .get("/companies")
-    .query({
-      nameLike: "c",
-      minEmployees: "2",
-      maxEmployees: "3"
-    });
+      .get("/companies")
+      .query({
+        nameLike: "c",
+        minEmployees: "2",
+        maxEmployees: "3"
+      });
 
     expect(resp.body).toEqual({
       companies:
@@ -158,8 +158,8 @@ describe("GET /companies", function () {
 
   test("not ok for additional invalid filters", async function () {
     const resp = await request(app)
-    .get("/companies")
-    .query({ name: 'c' });
+      .get("/companies")
+      .query({ name: 'c' });
 
     expect(resp.statusCode).toEqual(400);
     expect(resp.body.error.message).toEqual(
@@ -168,8 +168,8 @@ describe("GET /companies", function () {
 
   test("not ok if minEmployee not an integer", async function () {
     const resp = await request(app)
-    .get("/companies")
-    .query({ minEmployees: 'c' });
+      .get("/companies")
+      .query({ minEmployees: 'c' });
 
     expect(resp.statusCode).toEqual(400);
     expect(resp.body.error.message).toEqual(
@@ -200,6 +200,12 @@ describe("GET /companies/:handle", function () {
         description: "Desc1",
         numEmployees: 1,
         logoUrl: "http://c1.img",
+        jobs: [{
+          "equity": "0.010",
+          "id": expect.any(Number),
+          "salary": 1000000,
+          "title": "j1",
+        }]
       },
     });
   });
@@ -213,6 +219,12 @@ describe("GET /companies/:handle", function () {
         description: "Desc2",
         numEmployees: 2,
         logoUrl: "http://c2.img",
+        jobs: [{
+          "equity": "0.005",
+          "id": expect.any(Number),
+          "salary": 1100000,
+          "title": "j2",
+        }]
       },
     });
   });
@@ -260,8 +272,8 @@ describe("PATCH /companies/:handle", function () {
         name: "C1-new",
       })
       .set("authorization", `Bearer ${u1Token}`);
-      expect(resp.statusCode).toEqual(401);
-      expect(resp.body.error.message).toEqual("Unauthorized");
+    expect(resp.statusCode).toEqual(401);
+    expect(resp.body.error.message).toEqual("Unauthorized");
   });
 
   test("not found resp for no such company", async function () {

@@ -205,6 +205,13 @@ describe("GET /jobs/:id", function () {
         salary: 1100000,
         equity: "0.005",
         companyHandle: "c2",
+        company: {
+          "description": "Desc2",
+          "handle": "c2",
+          "logoUrl": "http://c2.img",
+          "name": "C2",
+          "numEmployees": 2
+        }
       },
     });
   });

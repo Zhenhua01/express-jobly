@@ -28,14 +28,14 @@ class Company {
 
     const result = await db.query(
       `INSERT INTO companies(
-          handle,
-          name,
-          description,
-          num_employees,
-          logo_url)
-           VALUES
-             ($1, $2, $3, $4, $5)
-           RETURNING handle, name, description, num_employees AS "numEmployees", logo_url AS "logoUrl"`,
+            handle,
+            name,
+            description,
+            num_employees,
+            logo_url)
+            VALUES
+              ($1, $2, $3, $4, $5)
+            RETURNING handle, name, description, num_employees AS "numEmployees", logo_url AS "logoUrl"`,
       [
         handle,
         name,
@@ -58,17 +58,6 @@ class Company {
 
   static async findAll(search) {
 
-    // if (search.minEmployees) {
-    //   if (!(search.minEmployees)) {
-    //     throw new BadRequestError("Min employees search must be a number");
-    //   }
-    // }
-    // if (search.maxEmployees) {
-    //   if (!(search.maxEmployees)) {
-    //     throw new BadRequestError("Max employees search must be a number");
-    //   }
-    // }
-
     if (search.minEmployees > search.maxEmployees) {
       throw new BadRequestError(
         "Minimum employees cannot exceed maximum employees"
@@ -79,32 +68,31 @@ class Company {
 
     const companiesRes = await db.query(
       `SELECT handle,
-                  name,
-                  description,
-                  num_employees AS "numEmployees",
-                  logo_url AS "logoUrl"
-             FROM companies
-             ${searchParameters}
-             ORDER BY name`, searchArray);
+              name,
+              description,
+              num_employees AS "numEmployees",
+              logo_url AS "logoUrl"
+            FROM companies
+            ${searchParameters}
+            ORDER BY name`,
+          searchArray);
 
     return companiesRes.rows;
   }
 
-// doesn't have unit test yet
-
-/** Given a search object data from req.query, returns 'searchParameters' and
- * 'searchArray' as an object for database query, where:
- *
- * searchParameters is a string for the 'WHERE' clause of the database query,
- * and searchArray is an array of search values.
- *
- *  * search object data can include:
- * { nameLike, minEmployees, maxEmployees }
- *
- * Returns: { searchParameters, searchArray } = { "WHERE ...", [values ...] }
- *
- * Returns an empty string and empty array if the search object is empty.
- */
+  /** Given a search object data from req.query, returns 'searchParameters' and
+   * 'searchArray' as an object for database query, where:
+   *
+   * searchParameters is a string for the 'WHERE' clause of the database query,
+   * and searchArray is an array of search values.
+   *
+   *  * search object data can include:
+   * { nameLike, minEmployees, maxEmployees }
+   *
+   * Returns: { searchParameters, searchArray } = { "WHERE ...", [values ...] }
+   *
+   * Returns an empty string and empty array if the search object is empty.
+   */
 
   static getSearchQuery(search) {
     let searchArray = [];
@@ -136,7 +124,7 @@ class Company {
   /** Given a company handle, return data about company.
    *
    * Returns { handle, name, description, numEmployees, logoUrl, jobs }
-   *   where jobs is [{ id, title, salary, equity, companyHandle }, ...]
+   *   where jobs is [{ id, title, salary, equity }, ...]
    *
    * Throws NotFoundError if not found.
    **/
@@ -144,17 +132,27 @@ class Company {
   static async get(handle) {
     const companyRes = await db.query(
       `SELECT handle,
-                name,
-                description,
-                num_employees AS "numEmployees",
-                logo_url AS "logoUrl"
-           FROM companies
-           WHERE handle = $1`,
+              name,
+              description,
+              num_employees AS "numEmployees",
+              logo_url AS "logoUrl"
+            FROM companies
+            WHERE handle = $1`,
       [handle]);
 
     const company = companyRes.rows[0];
 
     if (!company) throw new NotFoundError(`No company: ${handle}`);
+
+    const jobsRes = await db.query(
+      `SELECT id, title, salary, equity
+          FROM jobs
+          WHERE company_handle = $1
+          ORDER BY id`,
+      [handle],
+  );
+
+  company.jobs = jobsRes.rows;
 
     return company;
   }

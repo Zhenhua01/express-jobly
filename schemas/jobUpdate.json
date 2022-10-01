@@ -4,7 +4,8 @@
     "type": "object",
     "properties": {
       "title": {
-        "type": "string"
+        "type": "string",
+        "maxLength": 30
       },
       "salary": {
         "type": "integer",

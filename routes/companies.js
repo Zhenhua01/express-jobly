@@ -70,17 +70,6 @@ router.get("/", async function (req, res, next) {
     throw new BadRequestError(errs);
   }
 
-  // const searchTerms = new Set(["nameLike", "minEmployees", "maxEmployees"]);
-
-  // if (Object.keys(search).length) {
-  //   const searchKeys = Object.keys(search);
-  //   searchKeys.forEach(s => {
-  //     if (!searchTerms.has(s)) {
-  //       throw new BadRequestError("invalid search terms");
-  //     };
-  //   })
-  // }
-
   const companies = await Company.findAll(search);
 
   return res.json({ companies });
