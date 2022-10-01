@@ -31,7 +31,7 @@ router.post("/", ensureAdmin, async function (req, res, next) {
   const validator = jsonschema.validate(
     req.body,
     userNewSchema,
-    {required: true}
+    { required: true }
   );
   if (!validator.valid) {
     const errs = validator.errors.map(e => e.stack);
@@ -59,7 +59,8 @@ router.get("/", ensureAdmin, async function (req, res, next) {
 
 /** GET /[username] => { user }
  *
- * Returns { username, firstName, lastName, isAdmin }
+ * Returns { username, firstName, lastName, isAdmin, jobs }
+ *  where jobs is { id, title, companyHandle, companyName, state }
  *
  * Authorization required: ensure user is Admin or the user
  **/
@@ -84,7 +85,7 @@ router.patch("/:username", ensureUserOrAdmin, async function (req, res, next) {
   const validator = jsonschema.validate(
     req.body,
     userUpdateSchema,
-    {required: true}
+    { required: true }
   );
   if (!validator.valid) {
     const errs = validator.errors.map(e => e.stack);
@@ -105,6 +106,22 @@ router.delete("/:username", ensureUserOrAdmin, async function (req, res, next) {
   await User.remove(req.params.username);
   return res.json({ deleted: req.params.username });
 });
+
+/** POST /[username]/jobs/[id]  {"applied": jobId}
+ *
+ * Authorization required: ensure user is Admin or the user
+ * */
+
+router.post("/:username/jobs/:id",
+  ensureUserOrAdmin,
+  async function (req, res, next) {
+    const jobId = req.params.id;
+    const username = req.params.username;
+
+    await User.applyForJob(username, jobId);
+    return res.json({ applied: +jobId });
+  });
+
 
 
 module.exports = router;

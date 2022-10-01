@@ -86,6 +86,8 @@ async function commonBeforeAll() {
   });
 
   jobIds.push(job1.id, job2.id, job3.id);
+
+  await User.applyForJob("u1", jobIds[0]);
 }
 
 async function commonBeforeEach() {
