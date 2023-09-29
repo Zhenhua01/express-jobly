@@ -1,9 +1,5 @@
 # Express Jobly Backend
 
-Live API Demo (Heroku) (viewable routes without authentication):\
-[Jobly API: Companies](https://jobly-zhl.herokuapp.com/companies)\
-[Jobly API: Jobs](https://jobly-zhl.herokuapp.com/jobs)
-
 Project: Backend Express application with a RESTful API for users to view companies and apply to jobs, as well as admins to manage listings for companies and jobs.
 
 Frontend react application that utilizes this backend server:\
